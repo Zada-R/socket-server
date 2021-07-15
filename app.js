@@ -9,10 +9,15 @@ app.get("/", function (req, res) {
 io.of("/my-namespace").on("connection", (client) => {
   client.on("subscribeToTimer", (interval) => {
     let num = 1;
-    console.log("client is subscribing to timer with interval ", interval);
-    setInterval(() => {
+    let timer = setInterval(() => {
       client.emit("timer", num++);
+      console.log(client.connected);
     }, interval);
+    console.log("client is subscribing to timer with interval ", interval);
+    client.on("disconnect", (reason) => {
+      console.log(111111, reason);
+      clearInterval(timer);
+    });
   });
 });
 
